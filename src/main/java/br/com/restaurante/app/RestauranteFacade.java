@@ -5,13 +5,11 @@ import br.com.restaurante.pedido.GerenciadorPedidos;
 import br.com.restaurante.pedido.Pedido;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Objects;
 
 public class RestauranteFacade {
 
-    GerenciadorPedidos sistema = new GerenciadorPedidos();
+    private GerenciadorPedidos sistema = new GerenciadorPedidos();
 
     public Pedido registrarPedido(String nomeCliente) {
         return sistema.criarPedido(nomeCliente);
@@ -43,20 +41,20 @@ public class RestauranteFacade {
         return sistema.buscarPedido(numeroPedido);
     }
 
-    public HashMap<Integer, Pedido> cancelarPedido(int numeroPedido) {
-        return sistema.cancelarPedido(numeroPedido);
+    public void cancelarPedido(int numeroPedido) {
+        sistema.cancelarPedido(numeroPedido);
     }
 
     public ArrayList<Pedido> listarPedidos() {
         return sistema.getPedidos();
     }
 
-    public HashSet<String> combinacoesDoDia() {
-        return sistema.combinacoesDoDia();
-    }
-
     public Double totalDia() {
         return sistema.calcularTotalDoDia();
+    }
+
+    public HashSet<String> combinacoesDoDia() {
+        return sistema.combinacoesDoDia();
     }
 
 }

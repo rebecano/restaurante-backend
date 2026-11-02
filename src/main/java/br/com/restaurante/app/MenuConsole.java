@@ -1,51 +1,21 @@
 package br.com.restaurante.app;
 
-import br.com.restaurante.cardapio.ComBaconExtra;
-import br.com.restaurante.cardapio.ComCheddar;
 import br.com.restaurante.cardapio.ItemCardapio;
-import br.com.restaurante.cardapio.Lanche;
-import br.com.restaurante.pedido.GerenciadorPedidos;
 import br.com.restaurante.pedido.Pedido;
-import lombok.NonNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.InputMismatchException;
+import java.util.List;
+import java.util.Scanner;
 
 public class MenuConsole {
 
-    Scanner sc = new Scanner(System.in);
+    private Scanner sc = new Scanner(System.in);
 
-    public void exibirMenu() {
-        System.out.println("\n=== RESTAURANTE ===\n" +
-                "1 - Registrar novo pedido\n" +
-                "2 - Listar pedidos do dia\n" +
-                "3 - Modificar pedido\n" +
-                "4 - Fechar restaurante\n" +
-                "0 - Sair");
-    }
-
-    public void exibirCardapio() {
-        System.out.println("\n=== CARDÁPIO ===\n" +
-                "1 - X-Burger\n" +
-                "2 - X-Salada\n" +
-                "3 - X-Bacon\n");
-    }
-
-    public void exibirMenuModificacoes() {
-        System.out.println("\n=== OPÇÕES ===\n" +
-                "1 - Acrescentar\n" +
-                "2 - Remover\n" +
-                "3 - Cancelar\n" +
-                "0 - Sair");
-    }
-
-    public void exibirListaItensNumerados(ArrayList<ItemCardapio> itensPedido) {
-        System.out.println();
-
-        for (int i = 0; i < itensPedido.size(); i++) {
-            ItemCardapio item = itensPedido.get(i);
-            System.out.printf("%d - %s (R$ %.2f)\n", i + 1, item.getDescricao(), item.getPreco());
-        }
-    }
+    // ---------------------------------------------------------------
+    // Leituras básicas
+    // ---------------------------------------------------------------
 
     public int lerInteiro(String pergunta) {
         boolean leituraValida = false;
@@ -58,7 +28,7 @@ public class MenuConsole {
                 sc.nextLine();
                 leituraValida = true;
             } catch (InputMismatchException ime) {
-                System.out.println("Digite apenas números inteiros!\n");
+                System.out.println("Digite apenas números inteiros!");
                 sc.nextLine();
             }
         }
@@ -67,10 +37,8 @@ public class MenuConsole {
     }
 
     public int lerOpcao(int menorValorAceito, int maiorValorAceito, String pergunta) {
-        int opcao;
-
         do {
-            opcao = lerInteiro(pergunta);
+            int opcao = lerInteiro(pergunta);
 
             if (opcao >= menorValorAceito && opcao <= maiorValorAceito) {
                 return opcao;
@@ -84,24 +52,35 @@ public class MenuConsole {
     public String lerNomeCliente() {
         String nomeCliente = "";
 
-        try {
-            System.out.println("\nDigite o nome do cliente: ");
+        System.out.println();
+
+        while (nomeCliente.trim().isEmpty()) {
+            System.out.print("Digite o nome do cliente: ");
             nomeCliente = sc.nextLine();
-        } catch (IllegalArgumentException illegalArgumentException) {
-            opcaoInexistente();
+
+            if (nomeCliente.trim().isEmpty()) {
+                System.out.println("O nome não pode ficar em branco!");
+            }
         }
 
-        return nomeCliente;
+        return nomeCliente.trim();
     }
 
+    // ---------------------------------------------------------------
+    // Perguntas compostas
+    // ---------------------------------------------------------------
+
+    // Respostas na ordem queijo, alface, tomate, cebola (true = mantém o ingrediente)
     public ArrayList<Boolean> manterIngredientes() {
         ArrayList<String> ingredientes = new ArrayList<>(List.of("queijo", "alface", "tomate", "cebola"));
         ArrayList<Boolean> respostas = new ArrayList<>();
         String opcao = "";
 
+        System.out.println();
+
         for (String ingrediente : ingredientes) {
             while (!opcao.trim().equalsIgnoreCase("s") && !opcao.trim().equalsIgnoreCase("n")) {
-                System.out.printf("\nTirar %s? (s/n)\n", ingrediente);
+                System.out.printf("Tirar %s? (s/n): ", ingrediente);
                 opcao = sc.nextLine();
 
                 if (opcao.trim().equalsIgnoreCase("s")) {
@@ -118,11 +97,26 @@ public class MenuConsole {
         return respostas;
     }
 
+    public ArrayList<Integer> adicionaisLanche() {
+        ArrayList<Integer> respostas = new ArrayList<>();
+        int opcao;
+
+        do {
+            opcao = lerOpcao(0, 2, "Selecione uma das opções acima: ");
+            respostas.add(opcao);
+
+        } while (opcao != 0);
+
+        return respostas;
+    }
+
     public String lerOpcaoAdicionarItem() {
         String opcao = "";
 
+        System.out.println();
+
         while (!opcao.trim().equalsIgnoreCase("s") && !opcao.trim().equalsIgnoreCase("n")) {
-            System.out.println("\nAdicionar mais um item? (s/n)");
+            System.out.print("Adicionar mais um item? (s/n): ");
             opcao = sc.nextLine();
 
             if (!opcao.trim().equalsIgnoreCase("s") && !opcao.trim().equalsIgnoreCase("n")) {
@@ -133,6 +127,25 @@ public class MenuConsole {
         return opcao;
     }
 
+    // ---------------------------------------------------------------
+    // Menus
+    // ---------------------------------------------------------------
+
+    public void exibirMenu() {
+        System.out.println("\n=== RESTAURANTE ===\n" +
+                "1 - Registrar novo pedido\n" +
+                "2 - Listar pedidos do dia\n" +
+                "3 - Modificar pedido\n" +
+                "4 - Fechar restaurante\n" +
+                "0 - Sair");
+    }
+
+    public void exibirCardapio() {
+        System.out.println("\n=== CARDÁPIO ===\n" +
+                "1 - X-Burger\n" +
+                "2 - X-Salada\n" +
+                "3 - X-Bacon");
+    }
 
     public void exibirMenuAdicionais() {
         System.out.println("\n=== ADICIONAIS ===\n" +
@@ -141,26 +154,27 @@ public class MenuConsole {
                 "0 - Sair");
     }
 
-    public ArrayList<Integer> adicionaisLanche() {
-        ArrayList<Integer> respostas = new ArrayList<>();
-        int opcao;
-
-        do {
-            opcao = lerOpcao(0, 2, "\nSelecione uma das opções acima: ");
-            respostas.add(opcao);
-
-        } while (opcao != 0);
-
-        return respostas;
+    public void exibirMenuModificacoes() {
+        System.out.println("\n=== MODIFICAR PEDIDO ===\n" +
+                "1 - Acrescentar item\n" +
+                "2 - Remover item\n" +
+                "3 - Cancelar pedido\n" +
+                "0 - Voltar");
     }
 
+    // ---------------------------------------------------------------
+    // Exibição de dados
+    // ---------------------------------------------------------------
+
     public void exibirPedido(Pedido pedido) {
-        System.out.printf("\n--- PEDIDO #%d ---\n\n", pedido.getNumero());
-        System.out.printf("Nome cliente: %s\n\n", pedido.getNomeCliente());
+        System.out.printf("\n--- PEDIDO #%d ---\n", pedido.getNumero());
+        System.out.printf("Cliente: %s\n\n", pedido.getNomeCliente());
+
         for (ItemCardapio item : pedido.getItens()) {
             System.out.printf("%s (R$ %.2f)\n", item.getDescricao(), item.getPreco());
         }
-        System.out.printf("\nTotal: R$ %.2f\n\n", pedido.calcularTotal());
+
+        System.out.printf("\nTotal: R$ %.2f\n", pedido.calcularTotal());
     }
 
     public void exibirPedidos(ArrayList<Pedido> listaPedidos) {
@@ -171,30 +185,48 @@ public class MenuConsole {
         }
     }
 
+    public void exibirListaItensNumerados(ArrayList<ItemCardapio> itensPedido) {
+        System.out.println("\n=== ITENS DO PEDIDO ===");
+
+        for (int i = 0; i < itensPedido.size(); i++) {
+            ItemCardapio item = itensPedido.get(i);
+            System.out.printf("%d - %s (R$ %.2f)\n", i + 1, item.getDescricao(), item.getPreco());
+        }
+    }
+
+    public void exibirPedidoCancelado(int numeroPedido) {
+        System.out.printf("Pedido #%d cancelado.\n", numeroPedido);
+    }
+
     public void exibirFechamentoDoDia(double total, ArrayList<Pedido> listaPedidos, HashSet<String> combinacoes) {
         System.out.println("\n=== RELATÓRIO DO DIA ===\n");
 
         for (Pedido pedido : listaPedidos) {
-            System.out.printf("Pedido #%d - R$ %.2f",pedido.getNumero(), pedido.calcularTotal());
+            System.out.printf("Pedido #%d - R$ %.2f\n", pedido.getNumero(), pedido.calcularTotal());
         }
 
-        System.out.printf("Combinações diferentes: %d\n", combinacoes.size());
+        System.out.printf("\nCombinações diferentes: %d\n", combinacoes.size());
         for (String combinacao : combinacoes) {
             System.out.println("- " + combinacao);
         }
 
-        System.out.printf("\nTotal final: R$ %.2f\n\n", total);
+        System.out.printf("\nTotal final: R$ %.2f\n", total);
     }
 
-    public void encerrarSistema() {
-        System.out.println("Encerrando sistema...");
-    }
+    // ---------------------------------------------------------------
+    // Mensagens
+    // ---------------------------------------------------------------
 
     public void opcaoInexistente() {
         System.out.println("Opção não encontrada!");
     }
 
     public void exibirPedidoSemItens() {
-        System.out.println("\nO pedido não tem itens para remover.");
+        System.out.println("O pedido não tem itens para remover.");
     }
+
+    public void encerrarSistema() {
+        System.out.println("\nEncerrando sistema...");
+    }
+
 }

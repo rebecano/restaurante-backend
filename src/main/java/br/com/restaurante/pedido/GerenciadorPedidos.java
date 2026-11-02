@@ -22,10 +22,20 @@ public class GerenciadorPedidos {
         return pedidos.getOrDefault(numeroPedido, null);
     }
 
-    public HashMap<Integer, Pedido> cancelarPedido(int numeroPedido) {
+    public void cancelarPedido(int numeroPedido) {
         pedidos.remove(numeroPedido);
+    }
 
-        return new HashMap<>(pedidos);
+    public ArrayList<Pedido> getPedidos() {
+        return new ArrayList<>(pedidos.values());
+    }
+
+    public double calcularTotalDoDia() {
+        double total = 0.0;
+        for (Pedido pedido : pedidos.values()) {
+            total += pedido.calcularTotal();
+        }
+        return total;
     }
 
     public HashSet<String> combinacoesDoDia() {
@@ -38,18 +48,6 @@ public class GerenciadorPedidos {
         }
 
         return combinacoes;
-    }
-
-    public ArrayList<Pedido> getPedidos() {
-       return new ArrayList<>(pedidos.values());
-    }
-
-    public double calcularTotalDoDia() {
-        double total = 0.0;
-        for (Pedido pedido : pedidos.values()) {
-            total += pedido.calcularTotal();
-        }
-        return total;
     }
 
 }
