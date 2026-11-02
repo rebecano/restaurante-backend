@@ -11,7 +11,7 @@ public class Pedido {
     private int numero;
     private String nomeCliente;
 
-    private ArrayList<ItemCardapio> itens;
+    private ArrayList<ItemCardapio> itens = new ArrayList<>();
 
     public Pedido(int numero, String nomeCliente) {
         this.numero = numero;
@@ -26,6 +26,10 @@ public class Pedido {
         }
     }
 
+    public String getNomeCliente() {
+        return nomeCliente;
+    }
+
     public int getNumero() {
         return numero;
     }
@@ -34,11 +38,12 @@ public class Pedido {
         itens.add(itemCardapio);
     }
 
-    // tentar melhorar pra printar só no menu console
-    public void getItens() {
-        for (ItemCardapio item : itens) {
-            System.out.printf("%s (R$ %.2f)\n", item.getDescricao(), item.getPreco());
-        }
+    public ArrayList<ItemCardapio> getItens() {
+        return new ArrayList<>(itens);
+    }
+
+    public void removerItem(int opcaoItem) {
+        itens.remove(opcaoItem - 1);
     }
 
     public double calcularTotal() {

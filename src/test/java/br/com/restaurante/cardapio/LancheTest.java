@@ -11,9 +11,8 @@ class LancheTest {
 
     @Test
     void verificarSeUmPrecoNegativoEhRecusado() {
-        ArrayList<String> ingredientes = new ArrayList<>(List.of("pão", "carne", "queijo"));
         assertThrows(IllegalArgumentException.class, () -> {
-            new Lanche("X-Invalido", -10.0, ingredientes);
+            new Lanche("X-Invalido", -10.0);
         });
     }
 }

@@ -1,6 +1,10 @@
 package br.com.restaurante.pedido;
 
+import br.com.restaurante.cardapio.ItemCardapio;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class GerenciadorPedidos {
 
@@ -14,20 +18,30 @@ public class GerenciadorPedidos {
         return novoPedido;
     }
 
-    public Pedido buscarPedido(int numero) {
-        return pedidos.getOrDefault(numero, null);
+    public Pedido buscarPedido(int numeroPedido) {
+        return pedidos.getOrDefault(numeroPedido, null);
     }
 
-    // tentar melhorar pra printar só no menu console
-    public void getPedidos() {
-        pedidos.forEach((numero, pedido) -> {
-            System.out.println("\nNúmero do pedido: " + numero);
-            System.out.println("Detalhes: ");
-            pedido.getItens();
-            double total = pedido.calcularTotal();
-            System.out.printf("\nTotal: R$ %.2f\n\n", total);
+    public HashMap<Integer, Pedido> cancelarPedido(int numeroPedido) {
+        pedidos.remove(numeroPedido);
 
-        });
+        return new HashMap<>(pedidos);
+    }
+
+    public HashSet<String> combinacoesDoDia() {
+        HashSet<String> combinacoes = new HashSet<>();
+
+        for (Pedido pedido : pedidos.values()) {
+            for (ItemCardapio item : pedido.getItens()) {
+                combinacoes.add(item.getDescricao());
+            }
+        }
+
+        return combinacoes;
+    }
+
+    public ArrayList<Pedido> getPedidos() {
+       return new ArrayList<>(pedidos.values());
     }
 
     public double calcularTotalDoDia() {

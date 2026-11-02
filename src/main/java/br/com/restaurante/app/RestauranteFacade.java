@@ -4,54 +4,59 @@ import br.com.restaurante.cardapio.*;
 import br.com.restaurante.pedido.GerenciadorPedidos;
 import br.com.restaurante.pedido.Pedido;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Objects;
+
 public class RestauranteFacade {
 
-    MenuConsole menuConsole = new MenuConsole();
     GerenciadorPedidos sistema = new GerenciadorPedidos();
 
-    public Pedido registrarPedido() {
-        Pedido pedido = sistema.criarPedido(menuConsole.lerNomeCliente());
+    public Pedido registrarPedido(String nomeCliente) {
+        return sistema.criarPedido(nomeCliente);
+    }
 
-        String opcaoLanche = menuConsole.lerOpcaoLanche();
+    public void personalizarLanche(Pedido novoPedido, int opcaoLanche, ArrayList<Boolean> descricao, ArrayList<Integer> adicionais) {
+        Lanche lanchePedido = LancheFactory.criarLanche(opcaoLanche);
 
-        ItemCardapio lanchePedido = LancheFactory.criarLanche(opcaoLanche);
+        lanchePedido.setQueijo(descricao.get(0));
+        lanchePedido.setAlface(descricao.get(1));
+        lanchePedido.setTomate(descricao.get(2));
+        lanchePedido.setCebola(descricao.get(3));
 
-        int adicionalLanche;
+        ItemCardapio adicional = lanchePedido;
 
-        do {
-            menuConsole.exibirMenuAdicionais();
-            adicionalLanche = menuConsole.lerAdicionaisLanche();
-
-            switch (adicionalLanche) {
-                case 1:
-                    lanchePedido = new ComCheddar(lanchePedido);
-                    break;
-                case 2:
-                    lanchePedido = new ComBaconExtra(lanchePedido);
-                case 0:
-                    break;
-                default:
-                    menuConsole.opcaoInexistente();
+        for (int resposta : adicionais) {
+            if (resposta == 1) {
+                adicional = new ComCheddar(adicional);
             }
+            if (resposta == 2) {
+                adicional = new ComBaconExtra(adicional);
+            }
+        }
 
-        } while (adicionalLanche != 0);
-
-        pedido.adicionarItem(lanchePedido);
-
-        return pedido;
+        novoPedido.adicionarItem(adicional);
     }
 
-    public void finalizarPedido(Pedido pedido) {
-        menuConsole.exibirPedido(pedido);
+    public Pedido verificarPedido(int numeroPedido) {
+        return sistema.buscarPedido(numeroPedido);
     }
 
-    public void listarPedidos() {
-        sistema.getPedidos();
+    public HashMap<Integer, Pedido> cancelarPedido(int numeroPedido) {
+        return sistema.cancelarPedido(numeroPedido);
     }
 
-    public void fecharRestaurante() {
-        double total = sistema.calcularTotalDoDia();
-        menuConsole.exibirFechamentoDoDia(total, sistema);
+    public ArrayList<Pedido> listarPedidos() {
+        return sistema.getPedidos();
+    }
+
+    public HashSet<String> combinacoesDoDia() {
+        return sistema.combinacoesDoDia();
+    }
+
+    public Double totalDia() {
+        return sistema.calcularTotalDoDia();
     }
 
 }
