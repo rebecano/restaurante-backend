@@ -1,6 +1,6 @@
 # Sistema de Restaurante
 
-Projeto 1 do curso de TI: um sistema de pedidos de restaurante em Java, executado pelo console.
+Projeto 1 do bootcamp #ElasTech Java + IA: um sistema de pedidos de restaurante em Java, executado pelo console.
 
 **Autora:** Rebeca
 **Vídeo de demonstração:** https://youtu.be/PHJt2RpIaeg
